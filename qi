@@ -24,8 +24,8 @@ EOF
 if [ "$1" == "i" -o "$1" == "install" ]; then
     printf "installing xsqi...\n\n"
 
-    #mkdir -p $HOME/.config
-    #mkdir -p $HOME/.local/bin
+    mkdir -p $HOME/.config
+    mkdir -p $HOME/.local/bin
 
     printf "backing up existing configs...\n"
 
@@ -55,62 +55,62 @@ if [ "$1" == "i" -o "$1" == "install" ]; then
     fi
 
     if [ -f "$HOME/.bashrc" ]; then
-        printf ".bashrc -> .bashrc.bk\n"
-        # mv $HOME/.bashrc $HOME/.bashrc.bk
+        # printf ".bashrc -> .bashrc.bk\n"
+        mv -v $HOME/.bashrc $HOME/.bashrc.bk
     fi
     if [ -f "$HOME/.zshrc" ]; then
-        printf ".zshrc -> .zshrc.bk\n"
-        # mv $HOME/.zshrc $HOME/.zshrc.bk
+        # printf ".zshrc -> .zshrc.bk\n"
+        mv -v $HOME/.zshrc $HOME/.zshrc.bk
     fi
     if [ -f "$HOME/.vimrc" ]; then
-        printf ".vimrc -> .vimrc.bk\n"
-        # mv $HOME/.vimrc $HOME/.vimrc.bk
+        # printf ".vimrc -> .vimrc.bk\n"
+        mv -v $HOME/.vimrc $HOME/.vimrc.bk
     fi
     if [ -f "$HOME/.config/tmux/tmux.conf" ]; then
-        printf "tmux.conf -> tmux.conf.bk\n"
-        # mv $HOME/.config/tmux/tmux.conf $HOME/.config/tmux/tmux.conf.bk
+        # printf "tmux.conf -> tmux.conf.bk\n"
+        mv -v $HOME/.config/tmux/tmux.conf $HOME/.config/tmux/tmux.conf.bk
     fi
     if [ -f "$HOME/.config/lf/lfrc" ]; then
-        printf "lfrc -> lfrc.bk\n"
-        # mv $HOME/.config/lf/lfrc $HOME/.config/lf/lfrc.bk
+        # printf "lfrc -> lfrc.bk\n"
+        mv -v $HOME/.config/lf/lfrc $HOME/.config/lf/lfrc.bk
     fi
     if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
-        printf "kitty.conf -> kitty.conf.bk\n"
-        # mv $HOME/.config/kitty/kitty.conf $HOME/.config/kitty/kitty.conf.bk
+        # printf "kitty.conf -> kitty.conf.bk\n"
+        mv -v $HOME/.config/kitty/kitty.conf $HOME/.config/kitty/kitty.conf.bk
     fi
     printf "done.\n\nlinking..."
 
     printf "\nlinking .bashrc\n"
-    # ln -s ./config/.bashrc $HOME/.bashrc
+    ln -s ./config/.bashrc $HOME/.bashrc
 
     printf "linking .zshrc\n"
-    # ln -s ./config/.zshrc $HOME/.zshrc
+    ln -s ./config/.zshrc $HOME/.zshrc
 
     printf "linking .vimrc\n"
-    # ln -s ./config/.vimrc $HOME/.vimrc
+    ln -s ./config/.vimrc $HOME/.vimrc
 
     printf "linking tmux.conf\n"
-    # mkdir -p $HOME/.config/tmux
-    # ln -s ./config/tmux.conf $HOME/.config/tmux/tmux.conf
+    mkdir -p $HOME/.config/tmux
+    ln -s ./config/tmux.conf $HOME/.config/tmux/tmux.conf
 
     printf "linking lfrc\n"
-    # mkdir -p $HOME/.config/lf
-    # ln -s ./config/lfrc $HOME/.config/lf/lfrc
+    mkdir -p $HOME/.config/lf
+    ln -s ./config/lfrc $HOME/.config/lf/lfrc
 
     printf "linking kitty.conf\n"
-    # mkdir -p $HOME/.config/kitty
-    # ln -s ./config/kitty.conf $HOME/.config/kitty/kitty.conf
+    mkdir -p $HOME/.config/kitty
+    ln -s ./config/kitty.conf $HOME/.config/kitty/kitty.conf
 
     printf "done.\n\n"
 
     # now do the binaries
     printf "installing binaries\n"
-    printf "(dry)\n"
+    # printf "(dry)\n"
     # cp -v ./bin/* $HOME/.local/bin/
-#    cp -v ./bin/sx $HOME/.local/bin/
-#    cp -v ./bin/tmux-actions $HOME/.local/bin/
-#    cp -v ./bin/tmux-sessionizer $HOME/.local/bin/
-#    cp -v ./bin/vimv $HOME/.local/bin/
+    cp -v ./bin/sx $HOME/.local/bin/
+    cp -v ./bin/tmux-actions $HOME/.local/bin/
+    cp -v ./bin/tmux-sessionizer $HOME/.local/bin/
+    cp -v ./bin/vimv $HOME/.local/bin/
 
 
     printf "done.\n\nxsqi has been installed, do './qi c' to clean up (uninstall)\n"
@@ -121,54 +121,54 @@ elif [ "$1" == "c" -o "$1" == "clean" ]; then
 
     if [ -L "$HOME/.bashrc" ]; then
         printf "removing .bashrc\n"
-        # rm "$HOME/.bashrc"
+        rm "$HOME/.bashrc"
     fi
     if [ -L "$HOME/.zshrc" ]; then
         printf "removing .zshrc\n"
-        # rm "$HOME/.zshrc"
+        rm "$HOME/.zshrc"
     fi
     if [ -L "$HOME/.vimrc" ]; then
         printf "removing .vimrc\n"
-        # rm "$HOME/.vimrc"
+        rm "$HOME/.vimrc"
     fi
     if [ -L "$HOME/.config/tmux/tmux.conf" ]; then
         printf "removing tmux.conf\n"
-        # rm "$HOME/.config/tmux/tmux.conf"
+        rm "$HOME/.config/tmux/tmux.conf"
     fi
     if [ -L "$HOME/.config/lf/lfrc" ]; then
         printf "removing lfrc\n"
-        # rm "$HOME/.config/lf/lfrc"
+        rm "$HOME/.config/lf/lfrc"
     fi
     if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
         printf "removing kitty.conf\n"
-        # rm "$HOME/.config/kitty/kitty.conf"
+        rm "$HOME/.config/kitty/kitty.conf"
     fi
 
     printf "done.\n\nreinstating backups..."
 
     if [ -f "$HOME/.bashrc.bk" ]; then
-        printf ".bashrc.bk -> .bashrc\n"
-        # mv $HOME/.bashrc.bk $HOME/.bashrc
+        # printf ".bashrc.bk -> .bashrc\n"
+        mv -v $HOME/.bashrc.bk $HOME/.bashrc
     fi
     if [ -f "$HOME/.zshrc.bk" ]; then
-        printf ".zshrc.bk -> .zshrc\n"
-        # mv $HOME/.zshrc.bk $HOME/.zshrc
+        # printf ".zshrc.bk -> .zshrc\n"
+        mv -v $HOME/.zshrc.bk $HOME/.zshrc
     fi
     if [ -f "$HOME/.vimrc.bk" ]; then
-        printf ".vimrc.bk -> .vimrc\n"
-        # mv $HOME/.vimrc.bk $HOME/.vimrc
+        # printf ".vimrc.bk -> .vimrc\n"
+        mv -v $HOME/.vimrc.bk $HOME/.vimrc
     fi
     if [ -f "$HOME/.config/tmux/tmux.conf.bk" ]; then
-        printf "tmux.conf.bk -> tmux.conf\n"
-        # mv $HOME/.config/tmux/tmux.conf.bk $HOME/.config/tmux/tmux.conf
+        # printf "tmux.conf.bk -> tmux.conf\n"
+        mv -v $HOME/.config/tmux/tmux.conf.bk $HOME/.config/tmux/tmux.conf
     fi
     if [ -f "$HOME/.config/lf/lfrc.bk" ]; then
-        printf "lfrc.bk -> lfrc\n"
-        # mv $HOME/.config/lf/lfrc.bk $HOME/.config/lf/lfrc
+        # printf "lfrc.bk -> lfrc\n"
+        mv -v $HOME/.config/lf/lfrc.bk $HOME/.config/lf/lfrc
     fi
     if [ -f "$HOME/.config/kitty/kitty.conf.bk" ]; then
-        printf "kitty.conf.bk -> kitty.conf\n"
-        # mv $HOME/.config/kitty/kitty.conf.bk $HOME/.config/kitty/kitty.conf
+        # printf "kitty.conf.bk -> kitty.conf\n"
+        mv -v $HOME/.config/kitty/kitty.conf.bk $HOME/.config/kitty/kitty.conf
     fi
     printf "done.\n\n"
 
@@ -176,16 +176,16 @@ elif [ "$1" == "c" -o "$1" == "clean" ]; then
     printf "removing binaries...\n"
 
     printf "removing binary sx\n"
-    # rm "$HOME/.local/bin/sx"
+    rm "$HOME/.local/bin/sx"
 
     printf "removing binary tmux-actions\n"
-    # rm "$HOME/.local/bin/tmux-actions"
+    rm "$HOME/.local/bin/tmux-actions"
 
     printf "removing binary tmux-sessionizer\n"
-    # rm "$HOME/.local/bin/tmux-sessionizer"
+    rm "$HOME/.local/bin/tmux-sessionizer"
 
     printf "removing binary vimv\n"
-    # rm "$HOME/.local/bin/vimv"
+    rm "$HOME/.local/bin/vimv"
 
     printf "done.\n\nxsqi has been uninstalled\n"
 elif [ "$1" == "h" -o "$1" == "help" -o "$1" == "-h" -o "$1" == "--help" ]; then

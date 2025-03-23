@@ -23,11 +23,16 @@ following command
 ### Headless
 
 `sudo pacman -S --needed vim tmux fzf fd rg lf`
+
 `sudo apt install vim tmux fzf fd rg lf`
+
 `sudo dnf install vim tmux fzf fd rg lf`
 
 ### Desktop
 
 `sudo pacman -S --needed vim tmux fzf fd rg lf kitty`
+
 `sudo apt install vim tmux fzf fd rg lf kitty`
+
 `sudo dnf install vim tmux fzf fd rg lf kitty`
+
