@@ -1,4 +1,9 @@
-# xsqi - xsaya's quick installer [xsm devkit]
+# xsqi - [xsm devkit]
+
+xsqi is a light-weight devkit based on xsm configurations.
+It aims to use small, effective tools together with vim and
+tmux to create a minimalistic, yet very powerful developer
+environment using only a handful of configuration files.
 
 ## installation
 
