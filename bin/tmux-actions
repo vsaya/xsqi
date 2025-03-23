@@ -1,0 +1,120 @@
+#!/bin/bash
+
+wordList="$HOME/.local/share/xsm/lists/beautiful-words-list"
+if [[ -f "$wordList" ]]; then
+    rnames=$(cat "$wordList")
+else
+    read -r -d '' rnames <<'EOF'
+rejuvenated
+lily
+nemesis
+victorious
+quintessence
+vestigial
+onomatopeia
+murmur
+beguile
+glamorous
+EOF
+#rnames=<(cat )"potato\ncrisp\nbook"
+fi
+
+randomize_name() {
+
+    prefix=$(head /dev/urandom | tr -dc a-z | head -c 2)
+    rname=$(echo "$rnames" | shuf -n 1)
+    suffix=$(head /dev/urandom | tr -dc a-zA-Z0-9 | head -c 6)
+}
+
+if [[ "$1" == '-w' ]]; then
+    window=$(tmux list-windows | fzf --cycle --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept' | awk '{ print $1 }' | tr -d ":")
+    [[ -z "$window" ]] && exit 0
+    tmux select-window -t "$window"
+elif [[ "$1" == '-s' ]]; then
+    session=$(tmux list-sessions | fzf --cycle --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept' | awk '{ print $1 }' | tr -d ":")
+    [[ -z "$session" ]] && exit 0
+    tmux switch-client -t "$session"
+elif [[ "$1" == '-l' ]]; then
+    tmux switch-client -l \; \
+    refresh-client
+elif [[ "$1" == '-m' ]]; then
+    menu="rw window-return\n \
+      nw window-new\n \
+      ns session-new\n \
+      dev dev-session-new\n \
+      ren nn window-rename\n \
+      res session-rename\n \
+      vs vertical-split\n \
+      hs|sp horizontal-split\n \
+      cp capture buffer\n \
+      cl capture lines\n \
+      sa session-all"
+    choice=$(echo -e $menu | fzf --cycle --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept' | awk '{ print $1 }')
+    if [[ "$choice" == 'rw' ]]; then
+        tmux select-window -l
+    elif [[ "$choice" == 'sa' ]]; then
+        tmux choose-tree
+    elif [[ "$choice" == 'vs' ]]; then
+        tmux split-window
+    elif [[ "$choice" == 'hs|sp' ]]; then
+        tmux split-window -h
+    elif [[ "$choice" == 'dev' ]]; then
+        tmux-sessionizer
+    elif [[ "$choice" == 'ren' ]]; then
+        randomize_name
+        echo
+        echo -e "Select a new name for this window\nUse Ctrl+c to cancel\n"
+        echo -n "New name ($prefix-$rname-$suffix): "
+        read wname
+        if [[ -z "$wname" ]]; then
+            wname="$prefix-$rname-$suffix"
+        fi
+        tmux rename-window "$wname"
+    elif [[ "$choice" == 'res' ]]; then
+        randomize_name
+        echo
+        echo -e "Select a new name for this session\nUse Ctrl+c to cancel\n"
+        echo -n "New name ($prefix-$rname-$suffix): "
+        read sname
+        if [[ -z "$sname" ]]; then
+            sname="$prefix-$rname-$suffix"
+        fi
+        tmux rename-session "$sname"
+    elif [[ "$choice" == 'nw' ]]; then
+        randomize_name
+        tmuxSession=$(tmux display-message -p "#S")
+        echo
+        echo -e "Spawn a new window for session "$tmuxSession" \nUse Ctrl+c to cancel\n"
+        echo -n "New window with name ($prefix-$rname-$suffix): "
+        read wname
+        if [[ -z "$wname" ]]; then
+            wname="$prefix-$rname-$suffix"
+        fi
+        tmux new-window \; rename-window "$wname"
+    elif [[ "$choice" == 'ns' ]]; then
+        randomize_name
+        startpath="$HOME"
+        echo
+        echo -e "Spawn a new session \nUse Ctrl+c to cancel\n"
+        echo -n "New session with name ($prefix-$rname-$suffix): "
+        read sname
+        if [[ -z "$sname" ]]; then
+            sname="$prefix-$rname-$suffix"
+        fi
+        if ! tmux has-session -t=$sname 2>/dev/null; then
+            tmux new-session -ds "$sname" -n "mx->$sname" \; \
+                send-keys -t "$sname:mx->$sname" "clear;echo;echo '----++ sessionized $sname as new empty session ++----'" C-m \; \
+                switch-client -t "$sname" \;
+        else
+            echo "Session name is occupied"
+            sleep 1
+        fi
+    elif [[ "$choice" == 'cp' ]]; then
+        randomize_name
+        tmux capture-pane -pJS - >/tmp/"$rname-$suffix"
+        tmux display "Saved to /tmp/$rname-$suffix" \; select-window -t ':1.0' \; send-keys -t ':1.0' ":e /tmp/$rname-$suffix"
+    elif [[ "$choice" == 'cl' ]]; then
+        tmux capture-pane -pJS - \; >/tmp/capture-lines
+        cat /tmp/capture-lines | fzf -m --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept,ctrl-a:toggle+down' >/tmp/capture-line
+    fi
+fi

@@ -1,0 +1,121 @@
+# Basic Settings
+set hidden true
+set ignorecase true
+set icons true
+set filesep " "
+set info perm:size
+
+#colors of cursor selection (Not working?)
+# set cursoractivefmt   "\033[38;2;255;82;197;48;2;155;106;1m"
+# check ansi color escape sequences for more info on this
+set cursoractivefmt   "\033[38;5;15;48;2;0;102;0m"
+set cursorparentfmt   "\033[4m"
+set cursorpreviewfmt  "\033[4m"
+
+#set previewer ~/.config/lf/previewer.sh
+#set cleaner ~/.config/lf/clear_img.sh
+# set cleaner '~/.config/lf/cleaner'
+# set previewer '~/.config/lf/scope'
+# set previewer '~/.config/lf/batter' # my custom script that only uses bat for everything
+set previewer '/usr/bin/pistol'
+#set previewer 'cat'
+
+map j updir
+map k down
+map l up
+map ö open
+
+# Remove some defaults
+# map m (I want default action of marks)
+map o
+map ss
+map e
+# map n
+# map "'"
+# map '"'
+# map d
+
+# functions
+cmd mkdir ${{
+  printf "Directory Name: "
+  read ans
+  mkdir $ans
+}}
+cmd mkfile ${{
+  printf "File Name: "
+  read ans
+  touch $ans
+}}
+cmd imgpreview ${{
+    $sxiv -a "$f" % tr -d "\n" 
+}}
+cmd changedir ${{
+    $changeDir
+}}
+cmd sortallbysize :{{
+    set sortby size
+    set reverse true
+    set info size
+    glob-select *
+    calcdirsize
+    unselect
+}}
+cmd originalss :{{
+    set sortby size
+    set info size
+}}
+cmd vsedit ${{
+    file="$f"
+        if [[ -e "$file" ]]; then
+            fullPath=$(realpath "$file")
+            shortName=$(basename "$f")
+            dunstify "+mvim e:" "$shortName"
+            tmux send-keys -t 1 ":e $fullPath" C-m
+        else
+            echo "file doesn't exist."
+        fi
+}}
+cmd hellopath $echo "$PWD"
+cmd setwallpaper  $feh --bg-scale "$f"
+cmd setdefaultwallpaper $feh --bg-scale ~/dotfiles/.stow-local-ignore/wallpaper.png
+cmd setartwallpaper $feh --bg-scale ~/core/images/wallpapers/field-tree-art.jpg  
+# Basic Functions
+map . set hidden!
+map <enter> open
+map ee $$EDITOR "$f"
+map es vsedit
+map R reload
+map i $sxiv -tabf "$PWD"
+map ai $sxiv -tabfr "$PWD"
+map si $sxiv -abf "$fx"
+map X delete
+# map o changedir
+map o $xiv -f "$PWD"
+map af mkfile
+map ad mkdir
+# map M mark-save
+# map J mark-load
+map bg setwallpaper
+map bd setdefaultwallpaper
+map ba setartwallpaper
+map Pp hellopath
+map br $vimv $fx
+map - quit
+
+# size overrides (keep original ss as sz)
+map sz originalss
+map ss sortallbysize
+
+# yank file names
+map Yy $echo -n $(basename "$fx") | xclip -selection clipboard
+map YY $echo -n "$fx" | xclip -selection clipboard
+
+map h cd ~
+map gp cd ~/core/own
+map gD cd ~/dl
+map gr cd ~/aur
+map gd cd ~/dotfiles
+map gw cd ~/core/images/wallpapers
+map gi cd ~/core/images
+map gco cd ~/core
+

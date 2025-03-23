@@ -1,0 +1,194 @@
+#!/bin/bash
+
+binPath="$HOME/.local/bin"
+
+usage() {
+    cat <<'EOF'
+usage: qi COMMAND|OPTION
+
+description:    a small script that deploys the xsqi devkit to the system.
+
+                NOTE: run this script only inside of the /xsqi folder.
+                NOTE2: existing configuration files are backed up as
+                name.bk, and reinstated with the 'clean' command
+
+commands:
+    i|install   deploy config files and binaries to the system.
+    c|clean     clean up (effectively uninstall all configs and binaries).
+
+options:
+    -h          show usage.
+EOF
+}
+
+if [ "$1" == "i" -o "$1" == "install" ]; then
+    printf "installing xsqi...\n\n"
+
+    #mkdir -p $HOME/.config
+    #mkdir -p $HOME/.local/bin
+
+    printf "backing up existing configs...\n"
+
+    if [ -f "$HOME/.bashrc.bk" ]; then
+        printf ".bashrc.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+    if [ -f "$HOME/.zshrc.bk" ]; then
+        printf ".zshrc.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+    if [ -f "$HOME/.vimrc.bk" ]; then
+        printf ".vimrc.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+    if [ -f "$HOME/.config/tmux/tmux.conf.bk" ]; then
+        printf "tmux.conf.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+    if [ -f "$HOME/.config/lf/lfrc.bk" ]; then
+        printf "lfrc.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+    if [ -f "$HOME/.config/kitty/kitty.conf.bk" ]; then
+        printf "kitty.conf.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
+
+    if [ -f "$HOME/.bashrc" ]; then
+        printf ".bashrc -> .bashrc.bk\n"
+        # mv $HOME/.bashrc $HOME/.bashrc.bk
+    fi
+    if [ -f "$HOME/.zshrc" ]; then
+        printf ".zshrc -> .zshrc.bk\n"
+        # mv $HOME/.zshrc $HOME/.zshrc.bk
+    fi
+    if [ -f "$HOME/.vimrc" ]; then
+        printf ".vimrc -> .vimrc.bk\n"
+        # mv $HOME/.vimrc $HOME/.vimrc.bk
+    fi
+    if [ -f "$HOME/.config/tmux/tmux.conf" ]; then
+        printf "tmux.conf -> tmux.conf.bk\n"
+        # mv $HOME/.config/tmux/tmux.conf $HOME/.config/tmux/tmux.conf.bk
+    fi
+    if [ -f "$HOME/.config/lf/lfrc" ]; then
+        printf "lfrc -> lfrc.bk\n"
+        # mv $HOME/.config/lf/lfrc $HOME/.config/lf/lfrc.bk
+    fi
+    if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
+        printf "kitty.conf -> kitty.conf.bk\n"
+        # mv $HOME/.config/kitty/kitty.conf $HOME/.config/kitty/kitty.conf.bk
+    fi
+    printf "done.\n\nlinking..."
+
+    printf "\nlinking .bashrc\n"
+    # ln -s ./config/.bashrc $HOME/.bashrc
+
+    printf "linking .zshrc\n"
+    # ln -s ./config/.zshrc $HOME/.zshrc
+
+    printf "linking .vimrc\n"
+    # ln -s ./config/.vimrc $HOME/.vimrc
+
+    printf "linking tmux.conf\n"
+    # mkdir -p $HOME/.config/tmux
+    # ln -s ./config/tmux.conf $HOME/.config/tmux/tmux.conf
+
+    printf "linking lfrc\n"
+    # mkdir -p $HOME/.config/lf
+    # ln -s ./config/lfrc $HOME/.config/lf/lfrc
+
+    printf "linking kitty.conf\n"
+    # mkdir -p $HOME/.config/kitty
+    # ln -s ./config/kitty.conf $HOME/.config/kitty/kitty.conf
+
+    printf "done.\n\n"
+
+    # now do the binaries
+    printf "installing binaries\n"
+    printf "(dry)\n"
+    # cp -v ./bin/* $HOME/.local/bin/
+#    cp -v ./bin/sx $HOME/.local/bin/
+#    cp -v ./bin/tmux-actions $HOME/.local/bin/
+#    cp -v ./bin/tmux-sessionizer $HOME/.local/bin/
+#    cp -v ./bin/vimv $HOME/.local/bin/
+
+
+    printf "done.\n\nxsqi has been installed, do './qi c' to clean up (uninstall)\n"
+
+elif [ "$1" == "c" -o "$1" == "clean" ]; then
+    printf "cleaning up xsqi...\n\n"
+    printf "removing links...\n"
+
+    if [ -L "$HOME/.bashrc" ]; then
+        printf "removing .bashrc\n"
+        # rm "$HOME/.bashrc"
+    fi
+    if [ -L "$HOME/.zshrc" ]; then
+        printf "removing .zshrc\n"
+        # rm "$HOME/.zshrc"
+    fi
+    if [ -L "$HOME/.vimrc" ]; then
+        printf "removing .vimrc\n"
+        # rm "$HOME/.vimrc"
+    fi
+    if [ -L "$HOME/.config/tmux/tmux.conf" ]; then
+        printf "removing tmux.conf\n"
+        # rm "$HOME/.config/tmux/tmux.conf"
+    fi
+    if [ -L "$HOME/.config/lf/lfrc" ]; then
+        printf "removing lfrc\n"
+        # rm "$HOME/.config/lf/lfrc"
+    fi
+    if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
+        printf "removing kitty.conf\n"
+        # rm "$HOME/.config/kitty/kitty.conf"
+    fi
+
+    printf "done.\n\nreinstating backups..."
+
+    if [ -f "$HOME/.bashrc.bk" ]; then
+        printf ".bashrc.bk -> .bashrc\n"
+        # mv $HOME/.bashrc.bk $HOME/.bashrc
+    fi
+    if [ -f "$HOME/.zshrc.bk" ]; then
+        printf ".zshrc.bk -> .zshrc\n"
+        # mv $HOME/.zshrc.bk $HOME/.zshrc
+    fi
+    if [ -f "$HOME/.vimrc.bk" ]; then
+        printf ".vimrc.bk -> .vimrc\n"
+        # mv $HOME/.vimrc.bk $HOME/.vimrc
+    fi
+    if [ -f "$HOME/.config/tmux/tmux.conf.bk" ]; then
+        printf "tmux.conf.bk -> tmux.conf\n"
+        # mv $HOME/.config/tmux/tmux.conf.bk $HOME/.config/tmux/tmux.conf
+    fi
+    if [ -f "$HOME/.config/lf/lfrc.bk" ]; then
+        printf "lfrc.bk -> lfrc\n"
+        # mv $HOME/.config/lf/lfrc.bk $HOME/.config/lf/lfrc
+    fi
+    if [ -f "$HOME/.config/kitty/kitty.conf.bk" ]; then
+        printf "kitty.conf.bk -> kitty.conf\n"
+        # mv $HOME/.config/kitty/kitty.conf.bk $HOME/.config/kitty/kitty.conf
+    fi
+    printf "done.\n\n"
+
+    # remove binaries
+    printf "removing binaries...\n"
+
+    printf "removing binary sx\n"
+    # rm "$HOME/.local/bin/sx"
+
+    printf "removing binary tmux-actions\n"
+    # rm "$HOME/.local/bin/tmux-actions"
+
+    printf "removing binary tmux-sessionizer\n"
+    # rm "$HOME/.local/bin/tmux-sessionizer"
+
+    printf "removing binary vimv\n"
+    # rm "$HOME/.local/bin/vimv"
+
+    printf "done.\n\nxsqi has been uninstalled\n"
+elif [ "$1" == "h" -o "$1" == "help" -o "$1" == "-h" -o "$1" == "--help" ]; then
+    usage
+fi
+

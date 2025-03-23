@@ -1,0 +1,158 @@
+#!/bin/bash
+
+# set -eC
+
+usage() {
+    cat << EOF
+Usage: sx [OPTION] [COMMAND] 
+
+Description:
+sx is a wrapper that passes all received arguments to a tmux pane as a command. 
+Calling it from inside Vim with ':!sx ' allows the user to seamlessly pass commands 
+from Vim or vim-like editors and execute them in a separate tmux pane. This makes 
+working with the command line from inside Vim more effective as the user does 
+not have to background the Vim process to view or use the terminal. 
+
+Options: (the option must come first, and only one option is allowed per invocation)
+
+    -s|--set|set    set the [compilation] command to be run when no arguments are passed 
+                    (it is saved in the state directory '~/.local/state/xsm-sx/' if an 
+                    sx.conf file cannot be found in the current projects directory)
+
+    -e|--edit|edit  edit the sx configuration file for the current project
+
+    -c|--conf|conf  show all local state sx conf files and pick one to edit
+
+    -u|--use|use    pick a command from the conf file to use. It will run once
+
+    -y|--yank|yank  echo the set command for another program to yank/copy
+
+
+    -h|--help       show usage message (this message)
+
+EOF
+}
+
+tmux_running=$(pgrep tmux)
+if [[ -z $TMUX  && -z $tmux_running ]]; then
+    echo "tmux is not running. sx is meant to be used with tmux" >&2
+    exit 1
+fi
+
+run_command() {
+    # .1 = pane 1
+    tmux has-session -t .1 2>/dev/null
+    if [[ $? -eq 0 ]]; then
+        tmux resize-pane -t .0 -y 100% \; \
+        resize-pane -t .1 -y 50% \; \
+        send-keys -t '.1' "clear; printf 'sx compilation started at $(date '+%a %b %-d %H:%M:')%.3f\n\n' $(date '+%S.%N'); $@ ; if [[ "'$?'" -eq 0 ]]; then; printf \"\nsx compilation \e[31mfinished\e[0m at \$(date '+%a %b %-d %H:%M:')%.3f \n\"  \$(date '+%S.%N'); else; printf \"\nsx compilation exited \e[31mabnormally\e[0m with code \$? at \$(date '+%a %b %-d %H:%M:')%.3f\n\" \$(date '+%S.%N'); fi" C-m \;
+        #send-keys -t '.1' "clear; echo -e 'sx compilation started at $(date '+%a %b %-d %H:%M:%S.%N')\n\n'; $@ ; if [[ "'$?'" -eq 0 ]]; then; echo -e \"\n\nsx compilation \e[31mfinished\e[0m at \$(date '+%a %b %-d %H:%M:%S.%N')\"; else; echo -e \"\n\nsx compilation exited \e[31mabnormally\e[0m with code \$? at \$(date '+%a %b %-d %H:%M:%S.%N')\"; fi" C-m \;
+    else
+        tmux split-window -d -c ${PWD} \; \
+        send-keys -t '.1' "$@" C-m \;
+    fi
+}
+
+
+stateDir="$HOME/.local/state/xsm-sx"
+if [[ ! -d "$stateDir" ]]; then
+    mkdir -p "$stateDir"
+fi
+
+if [[ $# -eq 0 ]]; then
+    if [[ -f "./sx.conf" ]]; then
+        sxconf="./sx.conf"
+    else
+        if [[ -z "$(ls -A "$stateDir")" ]]; then
+            echo "No saved commands"
+            echo
+            exit 0
+        else
+            sxconf=$(grep -x -l -m 1 "$PWD" "$stateDir/"* | head -1)
+        fi
+    fi
+    # now we have a configuration to work with
+    sxroot=$(head -1 "$sxconf")
+    if [[ "$sxroot" == "$PWD" ]]; then
+        command=$(tail -1 "$sxconf" | tr -d "\n")
+        if [[ -z "$command" || "$sxroot" == "$command" ]]; then
+            echo "Could not find any commands"
+            exit 1
+        else
+            run_command "$command"
+        fi
+    else
+        echo "sx project root not found in : $sxconf" >&2
+        echo "ERROR: the first line of the sx configuration must be the full path to the projects root" >&2
+        exit 1
+    fi
+fi
+
+set_sx_conf() {
+    if [[ -f "./sx.conf" ]]; then
+        sxconf="./sx.conf"
+    else
+        sxconf=$(grep -x -l -m 1 "$PWD" "$stateDir/"* | head -1)
+
+        if [[ -z "$sxconf" ]]; then
+            timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+            name=$(basename "$PWD")
+            touch "$stateDir/$name-$timestamp.sx.conf"
+            echo "$PWD" > "$stateDir/$name-$timestamp.sx.conf"
+            sxconf="$stateDir/$name-$timestamp.sx.conf"
+        fi
+    fi
+}
+
+remove_sx_conf_duplicates() {
+    tmpconf="/tmp/sxconf-tmp"
+    cat "$sxconf" > "$tmpconf"
+    cat "$tmpconf" | awk '!x[$0]++' > "$sxconf"
+}
+
+case $1 in
+    -s|--set|set)
+        set_sx_conf
+        shift
+        if [[ $# -gt 0 ]]; then
+            echo "$@" >> "$sxconf"
+        fi
+        ;;
+    -e|--edit|edit)
+        set_sx_conf
+        remove_sx_conf_duplicates
+        shift
+        run_command "$EDITOR $sxconf"
+        exit 0
+        ;;
+    -c|--conf|conf)
+        choice=$(find "$stateDir" -type f | fzf --bind="esc:abort,Return:accept" --height=70%)
+        if [[ ! -z "$choice" ]]; then
+            run_command "$EDITOR $choice"
+        fi
+        exit 0
+        ;;
+    -u|--use|use)
+        set_sx_conf
+        remove_sx_conf_duplicates
+        choice=$(tail -n+2 "$sxconf" | fzf --bind="esc:abort,Return:accept" --height=70%)
+        if [[ ! -z "$choice" ]]; then
+            run_command "$choice"
+        fi
+        exit 0
+        ;;
+    -y|--yank|yank)
+        set_sx_conf
+        command=$(tail -1 "$sxconf" | tr -d "\n")
+        echo "$command"
+        exit 0
+        ;;
+    -h|--help)
+        usage
+        exit 0
+        ;;
+esac
+
+if [[ $# -gt 0 ]]; then
+    run_command "$@"
+fi
