@@ -376,6 +376,19 @@ ex () {
     echo "'$1' is not a valid file"
   fi
 }
+
+printShortDir() {
+echo "$(pwd  | awk -F'/' '{OFS="/"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf "%s/", substr($i, 0, 1) } else if (i == NF) { printf "%s/", $i} }}' | sed -E 's|^|../|;s|..///|/|;s|/+|/|g')"
+}
+# Get Git branch of current directory
+git_branch () {
+    if git rev-parse --git-dir >/dev/null 2>&1
+        then echo -e "" $(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
+    else
+        echo ""
+    fi
+}
+
 # dev functions --------------------------------- END
 
 
@@ -399,4 +412,7 @@ if command -v starship > /dev/null 2>&1; then
     PS1="$(starship prompt --status=$STATUS --jobs=$NUM_JOBS)"
     # starship
     eval "$(starship init $0)"
+else
+    PS1="\$(git_branch) \$(printShortDir) xsqi >>> "
+
 fi

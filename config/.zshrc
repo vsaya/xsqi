@@ -64,9 +64,6 @@ if [[ -d "$XSM_DOTS/.stow-local-ignore/scripts" ]]; then
     source $XSM_DOTS/.stow-local-ignore/scripts/zsh-plugins/globalias.plugin.zsh
     source $XSM_DOTS/.stow-local-ignore/scripts/zsh-plugins/syntax-highlighting/zsh-syntax-highlighting.zsh
 
-    # show special XSM welcome text art if welcomeMessage is set
-    [[ $welcomeMessage ]] && clear && cat $HOME/dotfiles/.stow-local-ignore/text-art/xsm-grass && unset welcomeMessage
-
     # xsm specific scripts
     # scripts deprecated in favor of simple functions
     #alias -g xin="bash $HOME/dotfiles/.stow-local-ignore/scripts/xsm-init"
@@ -284,13 +281,16 @@ printf " ----++ XSM ++----  󰣇  %s @%s\n         A    %s  p             %s\n"\
 # deprecated
 # ~/dotfiles/.stow-local-ignore/scripts/terminal-startup-msg
 
+# show special XSM welcome text art if welcomeMessage is set
+[[ $welcomeMessage ]] && clear && cat $XSM_DOTS/.stow-local-ignore/text-art/xsm-grass && unset welcomeMessage
+
 
 # dev functions ---------------------------------
 ls() {
     command ls --color=auto -F $@
 }
 
-mkf() {
+mk() {
     touch $@
 }
 
@@ -422,6 +422,17 @@ ex () {
     echo "'$1' is not a valid file"
   fi
 }
+printShortDir() {
+echo "$(pwd  | awk -F'/' '{OFS="/"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf "%s/", substr($i, 0, 1) } else if (i == NF) { printf "%s/", $i} }}' | sed -E 's|^|../|;s|..///|/|;s|/+|/|g')"
+}
+# Get Git branch of current directory
+git_branch () {
+    if git rev-parse --git-dir >/dev/null 2>&1
+        then echo -e "" $(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
+    else
+        echo ""
+    fi
+}
 # dev functions --------------------------------- END
 
 
@@ -437,4 +448,7 @@ fi
 if command -v starship > /dev/null 2>&1; then
     # starship
     eval "$(starship init zsh)"
+else
+    printf "\n"
+    PS1="$(git_branch) $(printShortDir) xsqi >>> "
 fi
