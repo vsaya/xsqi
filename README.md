@@ -23,21 +23,16 @@ following command
 
 `./qi clean`
 
-## Packages - Installation
+## Packages - Devkit Swiss Army Knife | Headless [Desktop]
 
-### Headless
+headless:  /.*lf/
 
-`sudo pacman -S --needed vim tmux fzf fd rg lf`
+vim tmux fzf zoxide curl gpg fd rg lf kitty
 
-`sudo apt install vim tmux fzf fd rg lf`
+### Starship - Installation
 
-`sudo dnf install vim tmux fzf fd rg lf`
+`curl -sS https://starship.rs/install.sh | sh`
 
-### Desktop
+### Package manager help commands
 
-`sudo pacman -S --needed vim tmux fzf fd rg lf kitty`
-
-`sudo apt install vim tmux fzf fd rg lf kitty`
-
-`sudo dnf install vim tmux fzf fd rg lf kitty`
-
+`sudo pacman -S --needed || sudo apt install || sudo dnf install`
