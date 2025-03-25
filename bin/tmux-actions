@@ -40,9 +40,10 @@ elif [[ "$1" == '-l' ]]; then
 elif [[ "$1" == '-m' ]]; then
     menu="rw window-return\n \
       nw window-new\n \
+      ne window-new-cmd-edit\n \
       ns session-new\n \
       dev dev-session-new\n \
-      ren nn window-rename\n \
+      nn ren window-rename\n \
       res session-rename\n \
       vs vertical-split\n \
       hs|sp horizontal-split\n \
@@ -60,7 +61,7 @@ elif [[ "$1" == '-m' ]]; then
         tmux split-window -h
     elif [[ "$choice" == 'dev' ]]; then
         tmux-sessionizer
-    elif [[ "$choice" == 'ren' ]]; then
+    elif [[ "$choice" == 'nn' ]]; then
         randomize_name
         echo
         echo -e "Select a new name for this window\nUse Ctrl+c to cancel\n"
@@ -91,6 +92,33 @@ elif [[ "$1" == '-m' ]]; then
             wname="$prefix-$rname-$suffix"
         fi
         tmux new-window \; rename-window "$wname"
+    elif [[ "$choice" == 'ne' ]]; then
+        randomize_name
+        cmdFile="/tmp/tmux-actions-cmd-edit-window"
+        tmuxSession=$(tmux display-message -p "#S")
+        echo "" > "$cmdFile"
+        echo "# W @S:"$tmuxSession" using format command<\n>[name]" >> "$cmdFile"
+        echo  "# N ($suffix)" >> "$cmdFile"
+        $EDITOR "$cmdFile"
+        printf "hello, world\n"
+        contents=$(grep -v -E '^#' "$cmdFile")
+        idx=0
+        while IFS= read -r line || [[ -n $line ]]; do
+            if [[ $idx -eq 0 ]]; then
+                if [[ ! -z "$line" ]]; then
+                    editCmd="$line"
+                fi
+            elif [[ $idx -eq 1 ]]; then
+                if [[ ! -z "$line" ]]; then
+                    wname="$line"
+                fi
+            fi
+            idx=$(( idx + 1 ))
+        done < <(printf '%s' "$contents")
+        if [[ -z "$wname" ]]; then
+            wname="$suffix-${editCmd:0:16}"
+        fi
+        tmux new-window \; rename-window "$wname" \; send-keys "$editCmd" C-m \;
     elif [[ "$choice" == 'ns' ]]; then
         randomize_name
         startpath="$HOME"
