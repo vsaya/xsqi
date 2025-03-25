@@ -1,8 +1,12 @@
 # comment ❯
 # format = "❯ $all$username$character"
-# format = "$all$shortdir$username$status$character"
-format = "$all${custom.shortdir}$username$status$character"
-right_format = "${custom.pdir}$cmd_duration$time[⠀͜͡ ₎](bold italic white)"
+#format = "$all$shortdir$username$status$character"
+#format = "┌── >>> $all$shortdir$status$line_break$username$character"
+#format = "│$line_break├ xsm > $all$line_break└───── ${custom.shortdir}$status$username$character"
+format = "┌ xsm > $all$line_break└───── ${custom.shortdir}$status$username$character"
+#format = "$all${custom.shortdir}$username$status$character"
+#right_format = "$git_branch$cmd_duration$time[⠀͜͡ ₎](bold italic white)"
+right_format = "$git_branch$cmd_duration$time[<](white)"
 
 add_newline = true
 
@@ -30,11 +34,11 @@ disabled = false
 
 # ×ʂąվą
 [line_break]
-disabled = true
+disabled = false
 
 [git_branch]
-style = "cyan"
-format = "[$branch(:$remote_branch)]($style) "
+style = "white"
+format = "[\\[$branch(:$remote_branch)\\]]($style) "
 disabled = false
 
 [git_metrics]
@@ -89,14 +93,15 @@ format = "[$duration]($style) "
 
 [custom.shortdir]
 style = "white"
-command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", $i} }}' | sed -E 's|^|../|;s|..///|/|;s|/+|/|g')\""
+command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", $i} }}' | sed -E 's|^| |;s|..///|/|;s|/+|/|g')\""
 when = true
 format = '[$output ]($style)'
-
-[custom.pdir]
-style = "white"
-command = "echo \"$(basename $(dirname \"$(pwd)\"))\""
-when = true
-format = '[\[$output\]]($style)'
 shell = 'bash'
+
+# [custom.pdir]
+# style = "white"
+# command = "echo \"$(basename $(dirname \"$(pwd)\"))\""
+# when = true
+# format = '[\[$output\]]($style)'
+# shell = 'bash'
 
