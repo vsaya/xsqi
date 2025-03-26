@@ -93,7 +93,7 @@ format = "[$duration]($style) "
 
 [custom.shortdir]
 style = "white"
-command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", $i} }}' | sed -E 's|^| |;s|..///|/|;s|/+|/|g')\""
+command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", $i} }}' | sed -E 's|^| |;s|/h/xsaya/|~|;s|/+|/|g')\""
 when = true
 format = '[$output ]($style)'
 shell = 'bash'
