@@ -85,6 +85,7 @@ nnoremap <leader>s :!tmux-sessionizer<cr><cr>
 nnoremap <leader>r :sil !sx<cr>:redraw!<cr>
 nnoremap <leader>x :let @+ = system('sx -y <bar> tr -d "\n"')<cr>:sil !sx ''<left>
 nnoremap <leader>X :let @+ = system('sx -y <bar> tr -d "\n"')<cr>:sil !sx set ''<left>
+nnoremap <leader>h yiw:sil !sx 'hex <C-r>"'<cr>
 nnoremap <leader>d :s/\[ \]/\[x\]/g<CR>wa <C-r>=strftime('%d-%m-%Y %H:%M')<Esc><Esc>
 nnoremap <leader>D :s/\[x.*\] /\[ \] /g<cr>
 nnoremap <leader>R :bd<cr>:! bash $HOME/dotfiles/.stow-local-ignore/scripts/xdo-renew-extern<cr>:e $HOME/core/x/notes/xdo.md<cr>

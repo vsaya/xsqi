@@ -279,6 +279,10 @@ printcolors() {
     for o in {0..255}; do print -Pn "%K{$o}  %k%F{$o}${(l:3::0:)o}%f " ${${(M)$((o%6)):#3}:+$'\n'}; done
 }
 
+hex() {
+    perl -e 'foreach $a(@ARGV){print "\e[48:2::".join(":",unpack("C*",pack("H*",$a)))."m \e[49m "};print "\n"' "$@"
+}
+
 fd() {
     command fd -H "$@"
 }

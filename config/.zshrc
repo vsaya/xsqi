@@ -247,7 +247,8 @@ stty start undef
 zle -N _xdw
 bindkey '^s' _xdw
 zle -N _insertHome
-bindkey '^j' _insertHome
+bindkey '^h' _insertHome
+bindkey -r '^j'
 # bindkey '^p' xd
 # lf
 bindkey -s '^o' 'lfcd^M'
@@ -325,11 +326,16 @@ printcolors() {
     for o in {0..255}; do print -Pn "%K{$o}  %k%F{$o}${(l:3::0:)o}%f " ${${(M)$((o%6)):#3}:+$'\n'}; done
 }
 
+hex() {
+    perl -e 'foreach $a(@ARGV){print "\e[48:2::".join(":",unpack("C*",pack("H*",$a)))."m \e[49m "};print "\n"' "$@"
+}
+
 fd() {
     command fd -H "$@"
 }
 
 gpat() {
+    # (cache clears when system is restarted)
     git config --global credential.helper "cache --timeout=604800"
     if [[ -z "$GH_TOKEN" ]]; then
         if [[ ! -d '/tmp/xi' ]]; then
