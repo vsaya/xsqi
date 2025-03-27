@@ -19,7 +19,7 @@ up existing configuration with a .bk suffix.
 The binary toolkit is copied to $HOME/.local/bin.
 
 
-## Packages - Devkit Swiss Army Knife | Headless [Desktop]
+### Packages - Devkit Swiss Army Knife | Headless [Desktop]
 
 headless:  /.*lf/
 
