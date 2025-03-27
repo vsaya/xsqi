@@ -28,7 +28,7 @@ necessary. (See package manager examples below)
 
 headless:  /.*lf/
 
-vim tmux fzf zoxide curl gpg fd rg xclip lf kitty
+`vim tmux fzf zoxide curl gpg fd rg xclip lf kitty`
 
 ### Starship (optional)
 
