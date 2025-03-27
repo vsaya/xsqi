@@ -18,21 +18,27 @@ up existing configuration with a .bk suffix.
 
 The binary toolkit is copied to $HOME/.local/bin.
 
-To uninstall and reinstate original configs, use the
-following command
-
-`./qi clean`
 
 ## Packages - Devkit Swiss Army Knife | Headless [Desktop]
 
 headless:  /.*lf/
 
-vim tmux fzf zoxide curl gpg fd rg lf kitty
+vim tmux fzf zoxide curl gpg fd rg xclip lf kitty
 
-### Starship - Installation
+### Starship (optional)
 
 `curl -sS https://starship.rs/install.sh | sh`
 
 ### Package manager help commands
 
 `sudo pacman -S --needed || sudo apt install || sudo dnf install`
+
+## Removal
+
+To uninstall and reinstate original configs, use the
+following command
+
+`./qi clean`
+
+NOTE: Some configuration folders and cache files may remain,
+but these can easily be dealt with manually if necessary.
