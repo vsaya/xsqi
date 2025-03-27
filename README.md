@@ -50,3 +50,4 @@ following command
 
 NOTE: Some configuration folders and cache files may remain,
 but these can easily be dealt with manually if necessary.
+(.local and .config and .cache if starship was used)
