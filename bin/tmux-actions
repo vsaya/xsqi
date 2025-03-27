@@ -47,8 +47,9 @@ elif [[ "$1" == '-m' ]]; then
       res session-rename\n \
       vs vertical-split\n \
       hs|sp horizontal-split\n \
-      cp capture buffer\n \
-      cl capture lines\n \
+      cp capture-buffer\n \
+      cl capture-lines\n \
+      cm copy-mode\n \
       sa session-all"
     choice=$(echo -e $menu | fzf --cycle --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept' | awk '{ print $1 }')
     if [[ "$choice" == 'rw' ]]; then
@@ -144,5 +145,7 @@ elif [[ "$1" == '-m' ]]; then
     elif [[ "$choice" == 'cl' ]]; then
         tmux capture-pane -pJS - \; >/tmp/capture-lines
         cat /tmp/capture-lines | fzf -m --bind 'tab:down,shift-tab:up,ctrl-f:accept,ctrl-j:accept,ctrl-a:toggle+down' >/tmp/capture-line
+    elif [[ "$choice" == 'cm' ]]; then
+        tmux copy-mode \;
     fi
 fi
