@@ -21,15 +21,23 @@ The binary toolkit is copied to $HOME/.local/bin.
 
 ### Packages - Devkit Swiss Army Knife | Headless [Desktop]
 
+These are the package dependencies, not all Linux
+distributions may have all the packages in their core
+repositories, but packages can be installed in any way
+necessary. (See package manager examples below)
+
 headless:  /.*lf/
 
 vim tmux fzf zoxide curl gpg fd rg xclip lf kitty
 
 ### Starship (optional)
 
+If starship is not found, a regular, basic prompt is
+configured.
+
 `curl -sS https://starship.rs/install.sh | sh`
 
-### Package manager help commands
+### Package manager syntax reminder
 
 `sudo pacman -S --needed || sudo apt install || sudo dnf install`
 
