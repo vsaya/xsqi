@@ -53,6 +53,10 @@ if [ "$1" == "i" -o "$1" == "install" ]; then
         printf "starship.toml.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
         exit 1
     fi
+    if [ -f "$HOME/.config/starship/config-transient.toml.bk" ]; then
+        printf "starship/config-transient.toml.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
+        exit 1
+    fi
     if [ -f "$HOME/.config/kitty/kitty.conf.bk" ]; then
         printf "kitty.conf.bk already exists, run ./qi c to clean up existing installation\n" >> /dev/stderr
         exit 1
@@ -82,6 +86,10 @@ if [ "$1" == "i" -o "$1" == "install" ]; then
         # printf "starship.toml starship.toml.bk\n"
         mv -v $HOME/.config/starship.toml $HOME/.config/starship.toml.bk
     fi
+    if [ -f "$HOME/.config/starship/config-transient.toml" ]; then
+        # printf "starship/config-transient.toml starship/config-transient.toml.bk\n"
+        mv -v $HOME/.config/starship/config-transient.toml $HOME/.config/starship/config-transient.toml.bk
+    fi
     if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
         # printf "kitty.conf -> kitty.conf.bk\n"
         mv -v $HOME/.config/kitty/kitty.conf $HOME/.config/kitty/kitty.conf.bk
@@ -106,8 +114,11 @@ if [ "$1" == "i" -o "$1" == "install" ]; then
     ln -s $HOME/xsqi/config/lfrc $HOME/.config/lf/lfrc
 
     printf "linking starship.toml\n"
-    mkdir -p $HOME/.config/starship.toml
     ln -s $HOME/xsqi/config/starship.toml $HOME/.config/starship.toml
+
+    printf "linking starship/config-transient.toml\n"
+    mkdir -p $HOME/.config/starship
+    ln -s $HOME/xsqi/config/config-transient.toml $HOME/.config/starship/config-transient.toml
 
     printf "linking kitty.conf\n"
     mkdir -p $HOME/.config/kitty
@@ -155,6 +166,10 @@ elif [ "$1" == "c" -o "$1" == "clean" ]; then
         printf "removing starship.toml\n"
         rm "$HOME/.config/starship.toml"
     fi
+    if [ -L "$HOME/.config/starship/config-transient.toml" ]; then
+        printf "removing starship/config-transient.toml\n"
+        rm "$HOME/.config/starship/config-transient.toml"
+    fi
     if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
         printf "removing kitty.conf\n"
         rm "$HOME/.config/kitty/kitty.conf"
@@ -185,6 +200,10 @@ elif [ "$1" == "c" -o "$1" == "clean" ]; then
     if [ -f "$HOME/.config/starship.toml.bk" ]; then
         # printf "starship.toml.bk -> starship.toml\n"
         mv -v $HOME/.config/starship.toml.bk $HOME/.config/starship.toml
+    fi
+    if [ -f "$HOME/.config/starship/config-transient.toml.bk" ]; then
+        # printf "starship/config-transient.toml.bk -> starship/config-transient.toml\n"
+        mv -v $HOME/.config/starship/config-transient.toml.bk $HOME/.config/starship/config-transient.toml
     fi
     if [ -f "$HOME/.config/kitty/kitty.conf.bk" ]; then
         # printf "kitty.conf.bk -> kitty.conf\n"
