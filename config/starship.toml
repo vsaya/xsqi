@@ -3,10 +3,11 @@
 #format = "$all$shortdir$username$status$character"
 #format = "┌── >>> $all$shortdir$status$line_break$username$character"
 #format = "│$line_break├ xsm > $all$line_break└───── ${custom.shortdir}$status$username$character"
-format = "┌ xsm > $all$line_break└───── ${custom.shortdir}$status$username$character"
+format = "┌+ > $all$fill$git_branch$package$python$bun$nodejs$golang$c$line_break└───── ${custom.shortdir}$status$username$character"
 #format = "$all${custom.shortdir}$username$status$character"
 #right_format = "$git_branch$cmd_duration$time[⠀͜͡ ₎](bold italic white)"
-right_format = "$git_branch$cmd_duration$time[<](white)"
+#right_format = "$golang$git_branch$cmd_duration$time[<](white)"
+right_format = "$cmd_duration$time[<](white)"
 
 add_newline = true
 
@@ -28,8 +29,10 @@ command_timeout = 1000
 [character]
 success_symbol = "[ >>>](italic white)"
 # error_symbol = "[ >>> ](italic red)[ ✗](red)"
-error_symbol = "[ *>>>](italic red)"
-vimcmd_symbol =  "[ ₍ ](bold green)"
+# weird symbol: ₍ (used to be for vimcmd mode)
+# but it's better to use ascii characters, whenever possible
+error_symbol = "[ *](italic red)[>>>](italic white)"
+vimcmd_symbol =  "[ +/-](italic magenta)"
 disabled = false
 
 # ×ʂąվą
@@ -49,13 +52,20 @@ deleted_style = "red"
 [git_status]
 format = '([$all_status$ahead_behind]($style) )'
 style = "white"
+ahead = ">"
+behind = "<"
+diverged = "<>"
+renamed = "r"
 deleted = 'x'
 
+[git_commit]
+tag_symbol = " tag "
+
 [status]
-style = "cyan"
+style = "red"
 symbol = ''
 success_symbol = ''
-format = '[ EXIT \[$symbol$int\]]($style)'
+format = '[ EXIT \[$symbol$int\]]($style) '
 disabled = false
 
 [username]
@@ -80,16 +90,39 @@ truncation_symbol = "../"
 disabled = true
 
 [fill]
-symbol = "."
+symbol = " "
 
 [time]
-format = "@[$time]($style) "
+style = "white"
+format = "[$time]($style) "
 disabled = true
 
 
 [cmd_duration]
+style = "white"
 format = "[$duration]($style) "
 
+# langauge modules
+[golang]
+format = 'go $version '
+
+[c]
+format = '$name $version '
+
+[nodejs]
+format = 'nodejs $version '
+
+[python]
+style = "white"
+symbol = 'py '
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+pyenv_version_name = true
+
+[bun]
+format = 'bun $version '
+
+[package]
+format = 'pkg $version '
 
 [custom.shortdir]
 style = "white"
