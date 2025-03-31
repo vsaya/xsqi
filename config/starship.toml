@@ -102,6 +102,13 @@ disabled = true
 style = "white"
 format = "[$duration]($style) "
 
+[jobs]
+style = 'white'
+symbol = '+& '
+number_threshold = 2
+symbol_threshold = 1
+format = '[$symbol$number]($style)'
+
 # langauge modules
 [golang]
 format = 'go $version '
