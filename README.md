@@ -19,16 +19,20 @@ up existing configuration with a .bk suffix.
 The binary toolkit is copied to $HOME/.local/bin.
 
 
-### Packages - Devkit Swiss Army Knife | Headless [Desktop]
+### Packages - Devkit Swiss Army Knife | Primarily for Desktop
 
 These are the package dependencies, not all Linux
 distributions may have all the packages in their core
 repositories, but packages can be installed in any way
 necessary. (See package manager examples below)
 
-headless:  /.*lf/
+base:
+gvim tmux fzf zsh zoxide curl gpg xclip
+or vim-gtk
 
-`vim tmux fzf zoxide curl gpg fd rg xclip lf kitty`
+extra:
+fd rg lf kitty
+(can always get binaries if not available from main repo)
 
 ### Starship (optional)
 
