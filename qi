@@ -124,6 +124,10 @@ if [ "$1" == "i" -o "$1" == "install" ]; then
     mkdir -p $HOME/.config/kitty
     ln -s $HOME/xsqi/config/kitty.conf $HOME/.config/kitty/kitty.conf
 
+    printf "linking xsqi-rebinds\n"
+    mkdir -p $HOME/.local/share/xsm
+    ln -s $HOME/xsqi/binds/xsqi-rebinds $HOME/.local/share/xsm/xsqi-rebinds
+
     printf "done.\n\n"
 
     # now do the binaries
@@ -173,6 +177,10 @@ elif [ "$1" == "c" -o "$1" == "clean" ]; then
     if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
         printf "removing kitty.conf\n"
         rm "$HOME/.config/kitty/kitty.conf"
+    fi
+    if [ -L "$HOME/.local/share/xsm/xsqi-rebinds" ]; then
+        printf "removing xsqi-rebinds\n"
+        rm "$HOME/.local/share/xsm/xsqi-rebinds"
     fi
 
     printf "done.\n\nreinstating backups...\n"

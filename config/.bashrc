@@ -340,9 +340,26 @@ xwm() {
     printf "\n\n\nТерпение и труд всё перетрут.\n"
 }
 
+xfk() {
+    if [[ -L "$HOME/.local/share/xsm/xsqi-rebinds" ]]; then
+        printf "Fixing layout and key rebinds for xsqi devkit...\n"
+        printf "Setting SE layout...\n"
+        setxkbmap -layout se
+        printf "Loading custom keybinds with xmodmap...\n"
+        xmodmap "$HOME/.local/share/xsm/xsqi-rebinds"
+        printf "Done.\n\n"
+    else
+        printf "Could not find xsqi-rebinds map\n"
+        printf "Nothing to be done.\n\n"
+    fi
+}
+
 xin() {
     if command -v xdo-renew; then
         xdo-renew
+    fi
+    if [[ "$1" == "-k" ]]; then
+        xfk
     fi
 
     tmux new-session -d \; rename-window scratch \; send-keys 'xsc' C-m \;
