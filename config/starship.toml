@@ -27,11 +27,11 @@ command_timeout = 1000
 # disabled = false
 
 [character]
-success_symbol = "[ >>>](italic white)"
+success_symbol = "[ >>>](white)"
 # error_symbol = "[ >>> ](italic red)[ ✗](red)"
 # weird symbol: ₍ (used to be for vimcmd mode)
 # but it's better to use ascii characters, whenever possible
-error_symbol = "[ *](italic red)[>>>](italic white)"
+error_symbol = "[ *](italic red)[>>>](white)"
 vimcmd_symbol =  "[ +/-](italic magenta)"
 disabled = false
 
@@ -133,7 +133,7 @@ format = 'pkg $version '
 
 [custom.shortdir]
 style = "white"
-command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", $i} }}' | sed -E 's|^| |;s|/h/xsaya/|~|;s|/+|/|g')\""
+command = "echo \"$(pwd  | awk -F'/' '{OFS=\"/\"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf \"%s/\", substr($i, 0, 1) } else if (i == NF) { printf \"%s/\", substr($i, 0, 4)} }}' | sed -E 's|^| |;s|/h/xsaya/|~|;s|/+|/|g')\""
 when = true
 format = '[$output ]($style)'
 shell = 'bash'
