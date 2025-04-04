@@ -20,6 +20,8 @@ SAVEHIST=1000
 # share history across all open zsh instances
 setopt SHARE_HISTORY
 export HISTCONTROL=$HISTCONTROL:ignoredups
+# unset cr for no automatic newlines
+unsetopt PROMPT_CR
 # set Vi mode
 set -o vi
 # Remove mode switching delay.
@@ -202,7 +204,7 @@ alias aw="dunstctl set-paused true && /home/xsaya/dotfiles/.stow-local-ignore/sc
 alias awx="i3-msg bar mode hide > /dev/null 2>&1 && tmux set-option -g status off && dunstctl set-paused true && /home/xsaya/dotfiles/.stow-local-ignore/scripts/away-display && dunstctl set-paused false && i3-msg bar mode dock > /dev/null 2>&1 && tmux set-option -g status on"
 alias snow="xsnow -nouseroot -ssnowdepth 100 -notrees &"
 
-# TODO: There must be a better nf by now
+# TODO: There must be a better nf by now (yes, fastfetch)
 alias nf="clear;neofetch --cpu_temp off --disable theme icons disk locale users public_ip local_ip --disk-subtitle name --underline off --shell_path off --color_blocks off --separator ':' --underline_char '_ _ _' --uptime_shorthand tiny --memory_percent on --bold on --disk_display infobar --memory_display off --bar_char '@' '-' --cpu_display infobar --bar_colors 7 7 --ascii $HOME/dotfiles/.stow-local-ignore/text-art/xsaya-nf-art --ascii_bold off --colors 14 7 7 7 7 7 | column -t -s ':'"
 
 
@@ -274,13 +276,19 @@ stty werase ^H 2>/dev/null
 #cat "$HOME/.local/state/startup-msg/msg"
 clear
 kernel=$(uname -r)
+privilege=$(whoami)
+if [[ "$privilege" == "root" ]]; then
+    privSymbol='#'
+else
+    privSymbol='$'
+fi
 if command -v pacman > /dev/null 2>&1; then
     packages="$(pacman -Q | wc -l)"
 else
-    packages="?"
+    packages="#???"
 fi
-printf " ----++ XSM ++----  󰣇  %s @%s\n         A    %s  p             %s\n"\
- $kernel $HOST $packages $SHELL
+# 󰣇 = archlogo
+printf " ----++ XSM ++----  k  %s @%s\n a %s    +/-    +vi  p  %s          s %s\n" $kernel $HOST $privSymbol $packages $0
 # deprecated
 # ~/dotfiles/.stow-local-ignore/scripts/terminal-startup-msg
 
@@ -380,7 +388,7 @@ xwm() {
         printf "\n"
         cal -m | head -n2 
         cal -m | tail -n+2 | tr "\n" "%" | sed -E 's/\s([0-9])(\s|%)/0\1\2/g' | tr "%" "\n" | grep -A 1 "$today" | sed -E "s/\s($today)/\*\1/;s/0/ /g;s/\*\s/ \*/g"
-    printf "\n"
+        printf "\n"
     fi
     if command -v calcurse > /dev/null 2>&1; then
         calcurse -d ${days}
@@ -470,7 +478,12 @@ export LS_COLORS
 if command -v zoxide > /dev/null 2>&1; then
     # zoxide with --no-cmd option to disable builtin aliases 
     # #(these things happen in functions instead for elegancy of no expansion
-    eval "$(zoxide init --no-cmd zsh)"
+    zoxideVersion=$(zoxide --version | awk '{ print $2 }')
+    if [[ "$zoxideVersion" =~ 0\.[0-7]\.[0-9] || "$zoxideVersion" == "0.8.0" ]]; then
+        eval "$(zoxide init --no-aliases zsh)"
+    else
+        eval "$(zoxide init --no-cmd zsh)"
+    fi
 fi
 
 if command -v starship > /dev/null 2>&1; then
@@ -510,4 +523,7 @@ if command -v starship > /dev/null 2>&1; then
 else
     printf "\n"
     PS1="$(git_branch) $(printShortDir) xsqi >>> "
+    if [[ "$privilege" == "root" ]]; then
+        PS1="$(git_branch) $(printShortDir) xsqi # >>> "
+    fi
 fi

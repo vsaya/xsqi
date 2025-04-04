@@ -234,12 +234,18 @@ bind '"\el": up-history'
 #cat "$HOME/.local/state/startup-msg/msg"
 clear
 kernel=$(uname -r)
+privilege=$(whoami)
+if [[ "$privilege" == "root" ]]; then
+    privSymbol='#'
+else
+    privSymbol='$'
+fi
 if command -v pacman > /dev/null 2>&1; then
     packages="$(pacman -Q | wc -l)"
 else
-    packages="?"
+    packages="#???"
 fi
-printf " ----++ XSM ++----  󰣇  %s @%s\n         A    %s  p             /bin/%s\n\n" $kernel $HOSTNAME $packages $0
+printf " ----++ XSM ++----  k  %s @%s\n a %s    +/-    +vi  p  %s         s %s\n" $kernel $HOSTNAME $privSymbol $packages $0
 # deprecated
 # ~/dotfiles/.stow-local-ignore/scripts/terminal-startup-msg
 
@@ -400,12 +406,12 @@ ex () {
 }
 
 printShortDir() {
-echo "$(pwd  | awk -F'/' '{OFS="/"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf "%s/", substr($i, 0, 1) } else if (i == NF) { printf "%s/", $i} }}' | sed -E 's|^|../|;s|..///|/|;s|/+|/|g')"
+echo "$(pwd  | awk -F'/' '{OFS="/"; for (i = 0; i <= NF; i++) { if (i > NF-3 && i != NF) { printf "%s/", substr($i, 0, 1) } else if (i == NF) { printf "%s/", substr($i, 0, 4)} }}' | sed -E 's|^|../|;s|..///|/|;s|/+|/|g')"
 }
 # Get Git branch of current directory
 git_branch () {
     if git rev-parse --git-dir >/dev/null 2>&1
-        then echo -e "" $(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
+        then echo -e "["$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')]
     else
         echo ""
     fi
@@ -423,21 +429,17 @@ export LS_COLORS
 if command -v zoxide > /dev/null 2>&1; then
     # zoxide with --no-cmd option to disable builtin aliases 
     # #(these things happen in functions instead for elegancy of no expansion
-    eval "$(zoxide init --no-cmd bash)"
+    zoxideVersion=$(zoxide --version | awk '{ print $2 }')
+    if [[ "$zoxideVersion" =~ 0\.[0-7]\.[0-9] || "$zoxideVersion" == "0.8.0" ]]; then
+        eval "$(zoxide init --no-aliases bash)"
+    else
+        eval "$(zoxide init --no-cmd bash)"
+    fi
+
 fi
 
-if command -v starship > /dev/null 2>&1; then
-    # Get the status code from the last command executed
-    STATUS=$?
-
-    # Get the number of jobs running.
-    NUM_JOBS=$(jobs -p | wc -l)
-
-    # Set the prompt to the output of `starship prompt`
-    PS1="$(starship prompt --status=$STATUS --jobs=$NUM_JOBS)"
-    # starship
-    eval "$(starship init $0)"
-else
-    PS1="\$(git_branch) \$(printShortDir) xsqi >>> "
-
+printf "\n"
+PS1="\$(git_branch) \$(printShortDir) xsqi >>> "
+if [[ "$privilege" == "root" ]]; then
+    PS1="$(git_branch) $(printShortDir) xsqi # >>> "
 fi

@@ -45,7 +45,7 @@ run_command() {
     if [[ $? -eq 0 ]]; then
         tmux resize-pane -t .0 -y 100% \; \
         resize-pane -t .1 -y 50% \; \
-        send-keys -t '.1' "clear; printf 'sx compilation started at $(date '+%a %b %-d %H:%M:')%.3f\n\n' $(date '+%S.%N'); $@ ; if [[ "'$?'" -eq 0 ]]; then; printf \"\nsx compilation \e[31mfinished\e[0m at \$(date '+%a %b %-d %H:%M:')%.3f \n\"  \$(date '+%S.%N'); else; printf \"\nsx compilation exited \e[31mabnormally\e[0m with code \$? at \$(date '+%a %b %-d %H:%M:')%.3f\n\" \$(date '+%S.%N'); fi" C-m \;
+        send-keys -t '.1' "clear; printf 'sx compilation started at $(date '+%a %b %-d %H:%M:')%.3f\n\n' $(date '+%S.%N'); $@ ; last_error_code=\$?; if [[ "'$last_error_code'" -eq 0 ]]; then; printf \"\nsx compilation \e[32mfinished\e[0m at \$(date '+%a %b %-d %H:%M:')%.3f \n\"  \$(date '+%S.%N'); else; printf \"\nsx compilation exited \e[31mabnormally\e[0m with code \e[31m\$last_error_code\e[0m at \$(date '+%a %b %-d %H:%M:')%.3f\n\" \$(date '+%S.%N'); fi" C-m \;
         #send-keys -t '.1' "clear; echo -e 'sx compilation started at $(date '+%a %b %-d %H:%M:%S.%N')\n\n'; $@ ; if [[ "'$?'" -eq 0 ]]; then; echo -e \"\n\nsx compilation \e[31mfinished\e[0m at \$(date '+%a %b %-d %H:%M:%S.%N')\"; else; echo -e \"\n\nsx compilation exited \e[31mabnormally\e[0m with code \$? at \$(date '+%a %b %-d %H:%M:%S.%N')\"; fi" C-m \;
     else
         tmux split-window -d -c ${PWD} \; \
